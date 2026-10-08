@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Keep experiment source hashes portable across Windows and Unix checkouts.
+RRN_functions.py text eol=lf
+experiments/damping/*.py text eol=lf
+experiments/damping/config.json text eol=lf

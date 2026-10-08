@@ -1,3 +1,10 @@
 mnistdata/*
 out/*
 ps/*
+.venv/
+__pycache__/
+*.pyc
+experiments/damping/results/checkpoints/
+experiments/damping/results/data.npz
+experiments/damping/results/predictions/
+experiments/damping/results/console.log

@@ -27,7 +27,9 @@ class RRNModel(nn.Module):
         no_recurrence:         bool  = False,
         rhythm_configuration:  str   = "golden",
         feature_norm:          str   = "batchnorm",
-        verbose:               bool  = True
+        verbose:               bool  = True,
+        node_frequencies:       np.ndarray | None = None,
+        damping:                float | np.ndarray = 0.99999,
     ):
         super().__init__()
         self.Fs = Fs
@@ -38,7 +40,13 @@ class RRNModel(nn.Module):
         # ---------------- Define frequencies from rhythm_configuration ----------------
         f0 = 2.0
         cfg = self.rhythm_configuration
-        if cfg == "golden":
+        if node_frequencies is not None:
+            frange = np.asarray(node_frequencies, dtype=float)
+            if frange.ndim != 1 or frange.size == 0 or not np.isfinite(frange).all():
+                raise ValueError("node_frequencies must be a nonempty finite 1-D array.")
+            if np.any(frange <= 0) or np.any(frange >= Fs / 4):
+                raise ValueError("Explicit frequencies must satisfy 0 < f < Fs/4.")
+        elif cfg == "golden":
             phi     = 1.618
             n_nodes = 40 #11
             frange  = f0 * (phi ** np.arange(0, n_nodes, 1))
@@ -60,7 +68,9 @@ class RRNModel(nn.Module):
             )
 
         # ---------------- Compute initial AR(2) weights (w1, w2) ----------------
-        r = 0.99999
+        r = np.broadcast_to(np.asarray(damping, dtype=float), frange.shape).copy()
+        if not np.isfinite(r).all() or np.any(r <= 0) or np.any(r >= 1):
+            raise ValueError("damping must be finite and satisfy 0 < r < 1 at each node.")
         
         w_t_minus_1 = 2 * r * np.cos(2 * np.pi * frange / Fs)
         w_t_minus_2 = (-r**2) * np.ones_like(w_t_minus_1)
@@ -76,6 +86,8 @@ class RRNModel(nn.Module):
 
         # Ensure |r1| < 1 and |r2| < 1, w_t_minus_1 > 0, and less than Nyquist
         final_valid = (r1 < 1) & (r2 < 1) & (w_t_minus_1 > 0) & (frange < Fs/2)
+        if node_frequencies is not None and not final_valid.all():
+            raise ValueError("Explicit nodes must all satisfy the stability constraints.")
 
         # Apply final constraints
         w_t_minus_1 = w_t_minus_1[final_valid]
