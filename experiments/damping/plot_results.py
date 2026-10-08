@@ -22,7 +22,11 @@ def read_csv(path):
 
 def save(fig, folder, stem):
     for extension in ("png", "svg", "pdf"):
-        fig.savefig(folder / f"{stem}.{extension}", dpi=220, facecolor="white")
+        path = folder / f"{stem}.{extension}"
+        fig.savefig(path, dpi=220, facecolor="white")
+        if extension == "svg":
+            # Matplotlib's multiline path attributes contain trailing spaces.
+            path.write_text("\n".join(line.rstrip() for line in path.read_text(encoding="utf-8").splitlines()) + "\n", encoding="utf-8")
     plt.close(fig)
 
 
