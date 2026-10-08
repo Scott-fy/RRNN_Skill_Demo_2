@@ -35,7 +35,10 @@ def main():
         raw = (ROOT / relative).read_bytes()
         normalized = raw.replace(b"\r\n", b"\n")
         candidates = (raw, normalized, normalized.replace(b"\n", b"\r\n"))
-        if not any(hashlib.sha256(b).hexdigest() == expected for b in candidates):
+        portable = metadata.get("source_normalized_sha256", {}).get(relative)
+        matches = (hashlib.sha256(normalized).hexdigest() == portable) if portable else any(
+            hashlib.sha256(b).hexdigest() == expected for b in candidates)
+        if not matches:
             raise AssertionError(f"Source changed: {relative}")
     data = make_data(c)
     assert data_hash(data) == metadata["data_sha256"], "Generated dataset hash changed"

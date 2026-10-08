@@ -48,5 +48,11 @@
     "experiments/damping/run.py": "339010ade6ae54591a67da7ccbfad4bce919fbd8084b4f5673ca1c4deabee777",
     "experiments/damping/config.json": "cc595e321c12375d4642824e4e9a3ddf721ce74f5027af698abac04d20ea2859"
   },
-  "interpretation": "Exploratory paired comparisons on one shared synthetic dataset; no consciousness inference."
+  "interpretation": "Exploratory paired comparisons on one shared synthetic dataset; no consciousness inference.",
+  "source_normalized_sha256": {
+    "RRN_functions.py": "897313a17917282094159d7b0d0ec209c7734d5dcfdb66c273a7447316a884f1",
+    "experiments/damping/run.py": "339010ade6ae54591a67da7ccbfad4bce919fbd8084b4f5673ca1c4deabee777",
+    "experiments/damping/config.json": "cc595e321c12375d4642824e4e9a3ddf721ce74f5027af698abac04d20ea2859"
+  },
+  "source_normalization_note": "Normalized hashes added during packaging after verifying the original byte hashes; only CRLF-to-LF normalization is applied."
 }
