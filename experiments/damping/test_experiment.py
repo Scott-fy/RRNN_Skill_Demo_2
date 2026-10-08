@@ -13,6 +13,12 @@ CONFIG = json.loads(Path(__file__).with_name("config.json").read_text())
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_quarter_interval_placements_exclude_endpoint(self):
+        endpoint = 2 / CONFIG["golden_ratio"]
+        expected = 2 - np.arange(4) * (2 - endpoint) / 4
+        np.testing.assert_allclose(CONFIG["starting_frequencies_hz"], expected)
+        self.assertGreater(CONFIG["starting_frequencies_hz"][-1], endpoint)
+
     def test_default_model_matches_explicit_original_grid(self):
         torch.manual_seed(77)
         original = RRNModel(n_classes=2, verbose=False)

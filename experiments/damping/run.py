@@ -230,6 +230,7 @@ def metadata(c, data):
                 git_status_at_start=status, python=sys.version, platform=platform.platform(),
                 numpy=np.__version__, torch=torch.__version__,
                 source_sha256={p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in files},
+                source_normalized_sha256={p: hashlib.sha256((ROOT / p).read_bytes().replace(b"\r\n", b"\n")).hexdigest() for p in files},
                 interpretation="Exploratory paired comparisons on one shared synthetic dataset; no consciousness inference.")
 
 

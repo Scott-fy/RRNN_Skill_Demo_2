@@ -5,9 +5,9 @@
     "golden_ratio": 1.618,
     "starting_frequencies_hz": [
       2.0,
-      1.902458849001428,
-      1.809674836071919,
-      1.721415952850116
+      1.8090234857849197,
+      1.6180469715698393,
+      1.4270704573547588
     ],
     "node_count": 11,
     "affected_node_count": 4,
@@ -37,22 +37,21 @@
     "cpu_threads": 1
   },
   "data_sha256": "40b9e90eeb292111e8f51436491ce7842c1a5535c9f14f57cd543330ef091201",
-  "upstream_or_parent_commit": "2334cd8e8c0cc6032611adf54627595d128b7bad",
-  "git_status_at_start": " M .gitignore\n M RRN_functions.py\n?? experiments/\n",
+  "upstream_or_parent_commit": "a694f3e76e2addcdf37ce9a2271ef2ca5e545f9b",
+  "git_status_at_start": " M experiments/damping/config.json\n M experiments/damping/run.py\n M experiments/damping/test_experiment.py\n",
   "python": "3.13.0 (tags/v3.13.0:60403a5, Oct  7 2024, 09:38:07) [MSC v.1941 64 bit (AMD64)]",
   "platform": "Windows-11-10.0.26200-SP0",
   "numpy": "2.5.3",
   "torch": "2.14.1+cpu",
   "source_sha256": {
     "RRN_functions.py": "029eaf398fa444e82d596529d7505e1159a605c2c28b1b68222ae2a97ecfe239",
-    "experiments/damping/run.py": "339010ade6ae54591a67da7ccbfad4bce919fbd8084b4f5673ca1c4deabee777",
-    "experiments/damping/config.json": "cc595e321c12375d4642824e4e9a3ddf721ce74f5027af698abac04d20ea2859"
+    "experiments/damping/run.py": "5560d6608d5e6592ef53467db051b8deeb0dd9b9b1281428b508a1993647dab8",
+    "experiments/damping/config.json": "d1cf2b7804821ca789e067ed1787167997acd5ec049949f3410b73e557e9dd95"
   },
-  "interpretation": "Exploratory paired comparisons on one shared synthetic dataset; no consciousness inference.",
   "source_normalized_sha256": {
     "RRN_functions.py": "897313a17917282094159d7b0d0ec209c7734d5dcfdb66c273a7447316a884f1",
-    "experiments/damping/run.py": "339010ade6ae54591a67da7ccbfad4bce919fbd8084b4f5673ca1c4deabee777",
-    "experiments/damping/config.json": "cc595e321c12375d4642824e4e9a3ddf721ce74f5027af698abac04d20ea2859"
+    "experiments/damping/run.py": "5560d6608d5e6592ef53467db051b8deeb0dd9b9b1281428b508a1993647dab8",
+    "experiments/damping/config.json": "4120bd4c0fd4b7bdfe8c13f91aabe2a3c01f71e955c612865c1bd8c0c0fc3578"
   },
-  "source_normalization_note": "Normalized hashes added during packaging after verifying the original byte hashes; only CRLF-to-LF normalization is applied."
+  "interpretation": "Exploratory paired comparisons on one shared synthetic dataset; no consciousness inference."
 }

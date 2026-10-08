@@ -6,9 +6,8 @@ and the paper [Brain-inspired, interpretable, resonant recurrent neural networks
 We investigate how making selected oscillators decay faster affects
 classification, and whether that effect depends on their exact frequencies.
 
-We completed **36 training runs**. High-frequency damping improved average
-accuracy in each of the four tested frequency grids; low-frequency damping had
-little average effect. These are exploratory results on one synthetic dataset.
+We completed **36 training runs** using the revised equal-Hz starting-frequency
+rule. High-frequency damping improved mean accuracy in all four grids. It improved 10 of 12 individual paired fits. Across these fits, its mean paired change was +1.08 percentage points; low-frequency damping's mean change was -0.32 percentage points. These are descriptive averages on a shared dataset.
 
 ## Motivation and research question
 
@@ -22,7 +21,7 @@ activity does not uniquely specify oscillator damping, and classifier accuracy
 does not measure consciousness. We therefore ask a narrower, testable question:
 
 > How does selectively shortening the persistence of low- versus high-frequency
-> nodes affect classification, and does the effect persist across nearby
+> nodes affect classification, and does the effect persist across shifted
 > golden-ratio frequency grids?
 
 This is a small extension, rather than a reproduction of all the paper's
@@ -67,10 +66,20 @@ contain count cues as well as temporal-pattern cues.
 
 ## Experiment design
 
-We use four starting frequencies: approximately **2.00, 1.90, 1.81, and
-1.72 Hz**. Each grid contains exactly 11 nodes, with adjacent frequencies
-separated by a factor of 1.618. Shifting the starting point changes the whole
-grid while preserving its spacing and model size.
+We use four starting frequencies: approximately **2.000, 1.809, 1.618, and
+1.427 Hz**. We divide the interval from 2 Hz to `2/phi` Hz into four equal
+steps, then use the original start and the three interior points:
+
+```text
+start[j] = 2 - j * (2 - 2/phi) / 4,  j = 0, 1, 2, 3; phi = 1.618
+```
+
+The starts are equally spaced **in Hz**. Within each grid, the 11 node
+frequencies still have **golden-ratio spacing**, `frequency[k] = start * phi**k`.
+This covers most of one golden-spacing interval and checks whether the result
+depends on the original 2 Hz placement. We exclude `2/phi` itself because that
+endpoint shares ten frequencies with the original grid. We shift downward to
+retain all nodes below the code's 250 Hz limit.
 
 For each grid, we train three conditions from scratch:
 
@@ -87,7 +96,7 @@ The intervention is an illustrative modeling choice, not a clinical estimate.
 "Low" and "high" refer to node ranks, not clinical EEG bands. The highest four
 original nodes are approximately 58, 94, 152, and 246 Hz, mostly above the task's
 modulation range. Shifts change overall coverage and introduce nodes below the
-paper's 2 Hz lower bound. This is a check of nearby placements, not a comparison
+paper's 2 Hz lower bound. This is a check of shifted placements, not a comparison
 of different frequency ratios.
 
 Each configuration uses three training seeds: **4 grids × 3 conditions ×
@@ -107,7 +116,10 @@ from the paper's 200 examples to reduce test-score noise. Training runs for
 do not select checkpoints or settings.
 
 We measure **paired accuracy changes** against the baseline with the same grid
-and training seed.
+and training seed. Comparing those changes across grids tests robustness to
+placement. Comparing baseline with baseline, or the same damping condition
+across grids, also measures placement sensitivity. These comparisons cannot
+separate alignment from coverage because both change when the grid moves.
 
 ![Experiment method](experiments/damping/results/figures/01_method.png)
 
@@ -118,13 +130,12 @@ to each grid's baseline:
 
 | Starting frequency | Baseline accuracy | Low-frequency damping change | High-frequency damping change |
 |---|---:|---:|---:|
-| 2.00 Hz | 65.77% | -0.27 | +0.83 |
-| 1.90 Hz | 65.42% | +0.28 | +0.90 |
-| 1.81 Hz | 65.05% | +0.13 | +2.15 |
-| 1.72 Hz | 65.77% | -0.10 | +0.67 |
+| 2.000 Hz | 65.77% | -0.27 | +0.83 |
+| 1.809 Hz | 65.03% | +0.30 | +2.18 |
+| 1.618 Hz | 66.43% | -0.22 | +0.10 |
+| 1.427 Hz | 65.85% | -1.10 | +1.22 |
 
-High-frequency damping improved the mean in all four grids and improved 11 of
-12 individual paired fits. Low-frequency damping had small, mixed effects.
+High-frequency damping improved mean accuracy in all four grids. It improved 10 of 12 individual paired fits. Across these fits, its mean paired change was +1.08 percentage points; low-frequency damping's mean change was -0.32 percentage points. These are descriptive averages on a shared dataset.
 The figure shows individual fits as well as means.
 
 ![Classification results](experiments/damping/results/figures/02_results.png)
@@ -134,8 +145,9 @@ range reduces unhelpful responses or changes their interactions with other
 nodes. We have not isolated this mechanism: damping changes gain, filtering,
 and feature scaling, and retraining changes learned connections.
 
-The supported conclusion is a **task-dependent damping effect whose positive
-high-frequency mean persists across these four placements**. It does not
+The experiment measures **task-dependent damping effects and their sensitivity
+to four starting-frequency placements**. Compare the paired changes across
+grids to judge how consistently an effect persists. The results do not
 establish a consciousness mechanism or universal superiority of golden spacing.
 
 ## Run the experiment
@@ -175,7 +187,7 @@ the planned two-slide presentation extension.
 | [Detailed methods](experiments/damping/README.md) | Full design, implementation details, and execution instructions |
 | [Code review guide](experiments/damping/CODE_REVIEW.md) | Upstream base, review scope, and portable repository instructions |
 
-Six scientific tests passed, all recorded results were audited, and a complete
+Seven scientific tests passed, all recorded results were audited, and a complete
 30-epoch baseline replay reproduced its recorded metrics exactly. Large
 datasets, checkpoints, and predictions are excluded from Git and can be
 regenerated. Small result tables, histories, provenance, and figures are included.

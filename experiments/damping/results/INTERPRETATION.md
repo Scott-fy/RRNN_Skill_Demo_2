@@ -1,73 +1,81 @@
-# Interpretation for the class demonstration
+# Interpretation of the revised equal-spacing study
 
-The 36 fits completed successfully. Each of four frequency grids was evaluated
-with baseline, low-frequency damping, and high-frequency damping across three
-matched training seeds. All fits used identical train/validation/test arrays.
+We reran all 36 fits with starting frequencies of 2.0000, 1.8090, 1.6180, 1.4271 Hz.
+The rule is `start[j] = 2 - j*(2 - 2/1.618)/4`, for j = 0, 1, 2, 3.
+The original 2 Hz grid and three interior points divide the starting-frequency
+interval into equal steps in Hz. The lower endpoint 2/phi is excluded.
+Golden spacing within each 11-node grid is unchanged.
 
 ## Findings
 
-High-frequency damping improved mean test accuracy in each of the four grids:
-+0.83, +0.90, +2.15, and +0.67 percentage points relative to the corresponding
-baseline. The individual paired differences were positive in 11 of 12 fits;
-one seed in the 1.90 Hz grid showed a decrease. Thus the direction of the
-grid-averaged effect persisted across these placements, but not every fit.
-The magnitude varied, with one large seed-specific gain in the 1.81 Hz grid.
+High-frequency damping improved mean accuracy in all four grids. It improved 10 of 12 individual paired fits. Across these fits, its mean paired change was +1.08 percentage points; low-frequency damping's mean change was -0.32 percentage points. These are descriptive averages on a shared dataset.
 
-Low-frequency damping had small, mixed grid-averaged effects: -0.27, +0.28,
-+0.13, and -0.10 percentage points. Across the 12 paired fits, its mean effect
-was approximately +0.01 percentage points. High-frequency damping's mean paired
-effect across the tested fits was approximately +1.14 percentage points.
-These are descriptive averages, not estimates from independent data replications.
+High-frequency damping's grid-averaged changes, in order from 2.000 to 1.427 Hz,
+were +0.83, +2.18, +0.10, +1.22 percentage points. Low-frequency damping's changes
+were -0.27, +0.30, -0.22, -1.10 percentage points. Individual fits vary; inspect
+the small points in the result figure and the rows in paired_effects.csv.
+No significance tests are reported.
 
-In the isolated-filter diagnostic (W = 0), damping reduced raw amplitude features
-at the selected nodes while leaving the other nodes unchanged. This confirms
-the direct filter intervention, not the final trained network's mechanism.
-Batch normalization can compensate for simple scale changes, and learned
-coupling can redistribute activity, so reduced raw feature magnitude alone
-does not establish why classification changed.
+## What the comparisons establish
 
-## A plausible explanation to discuss, not a demonstrated mechanism
+Within a grid, baseline versus an intervention measures the damping effect
+at that placement. Across grids, baseline versus baseline (or the same damped
+condition versus itself) measures placement sensitivity. Comparing paired
+damping-minus-baseline changes across grids tests whether the intervention's
+effect depends on placement. This directly addresses whether the original
+starting point at 2 Hz was unusually favorable for that effect.
 
-The task's modulation frequencies are 10–50 Hz. Most of the damped high-frequency
-nodes lie above this range. Reducing their long-lived responses might reduce
-unhelpful contributions or change interactions with more informative nodes.
-In the lowest-start grid, the first node in the high group is approximately
-49.97 Hz and enters the modulation range. The intervention also changes
-resonance width, gain, and amplitude-feature scaling. These possibilities
-remain confounded; no causal mediation or coupling ablation was performed.
+Grid shifts change both alignment and frequency coverage. Therefore, these
+comparisons measure placement sensitivity but do not uniquely explain whether
+alignment, coverage, or altered learned coupling caused an observed difference.
+That qualification does not invalidate the robustness question.
 
-The result does not support the proposed expectation that weaker high-frequency
-activity necessarily lowers classifier performance. It also does not establish
-that the RRN differs from, or matches, a biological consciousness mechanism.
-Here the input task, rather than a human state of consciousness, determines
-what information supports successful classification.
+## Physiological motivation and possible explanations
+
+The lowest four and highest four nodes are selected by rank in every grid;
+they are not fixed clinical EEG bands. The task modulates spike rate at 10–50 Hz.
+Most nodes in the highest group lie above that range, but its lowest node moves
+from approximately 58.06 Hz in the original grid to 46.97 Hz and 41.43 Hz in
+the final two grids. Thus the group's relation to informative input changes.
+
+Damping changes persistence, gain, resonance width, and feature scaling.
+Retraining also changes connections. Filtering unhelpful activity is one
+possible explanation for improvements, but this experiment does not isolate
+that mechanism. The uncoupled diagnostic (W = 0) checks the direct filter
+intervention using raw position/velocity amplitude features. It does not
+establish the mechanism of the final trained network.
+
+This is a brain-motivated computational experiment, not a validated simulation
+of an awake or unconscious brain. Classification performance cannot establish
+equivalence to a consciousness mechanism.
 
 ## Suggested two-slide narration
 
-Method: "We kept golden spacing and 11 nodes, shifted the grid modestly three
-times, and shortened the decay time of either the lowest four or highest four
-nodes to 20 ms. We retrained every condition using matched initialization and
-data. We compared each model with its own grid's unchanged-damping baseline."
+Method: "We kept golden spacing and 11 nodes. We divided the interval from
+2 Hz to 2/phi into four equal steps and used the original start plus three
+interior points. We shortened decay to 20 ms for either the lowest four or
+highest four nodes, retrained with matched initialization and data, and compared
+each intervention with the baseline in the same grid."
 
-Results: "High-frequency damping produced a small positive mean effect in all
-four grids, whereas low-frequency damping had little average effect. Individual
-fits varied. This illustrates task-dependent effects of oscillator persistence
-and limited robustness across nearby frequency placements. It does not measure
-consciousness or prove a brain mechanism."
+Results: "High-frequency damping improved mean accuracy in all four grids. It improved 10 of 12 individual paired fits. Across these fits, its mean paired change was +1.08 percentage points; low-frequency damping's mean change was -0.32 percentage points. These are descriptive averages on a shared dataset. This tests how oscillator damping interacts with task
+structure and node placement. It does not measure consciousness."
 
 ## Validation and scope
 
-Six scientific-invariant tests passed, covering default-model compatibility,
-stable isolated modes, matched trainable initialization, targeted damping,
-independent reproducible split streams, finite gradients, and diagonal projection.
-The results audit verified all 36 histories, first-best validation checkpoint
-selection, recorded prediction accuracy, regenerated dataset hash, source hashes,
-and paired effects. One complete 30-epoch baseline replay matched its original
-best epoch, validation accuracy, test accuracy, and test loss exactly.
+Seven scientific-invariant tests passed, including the new quarter-interval
+placement rule and endpoint exclusion. The recorded-result audit checks all
+36 histories, first-best validation checkpoint selection, prediction accuracy,
+regenerated data hash, source hashes, and paired changes. A complete 30-epoch
+baseline replay verified reproducibility.
 
-Limits: one generated dataset, three training seeds, four deterministic grids,
-one damping strength, relative frequency groups, and changing coverage with grid
-shifts. Results neither establish statistical significance nor generalize to
-other datasets, tasks, damping strengths, or frequency arrangements. The fixed
-sinusoid phase and finite windows can permit spike-count cues as well as temporal
-pattern cues. Isolated-mode stability is not proof of coupled-network stability.
+Only the starting-frequency list changed in the configuration. Training,
+validation, and test arrays have the same hash as in the previous study.
+All nine original-grid fits exactly match the previous checkpoint choices and
+evaluation metrics. Previous small-shift results remain available in Git history;
+the figures and tables in this directory describe the revised study.
+
+Limits: one dataset, three training seeds, four deterministic grids, one damping
+strength, relative node groups, and changing frequency coverage. The fixed-phase
+short-window task can contain count cues as well as temporal-pattern cues.
+Isolated-mode stability does not prove coupled-network stability. Results do
+not establish statistical significance or generalize to other tasks or bands.

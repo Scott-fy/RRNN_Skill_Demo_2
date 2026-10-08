@@ -2,15 +2,33 @@
 
 This extension asks whether selectively damping low- versus high-frequency
 nodes changes spike-train classification, and whether the effect persists
-across four nearby golden-ratio frequency grids. It is an exploratory model
+across four shifted golden-ratio frequency grids. It is an exploratory model
 sensitivity experiment motivated by brain rhythms, not a model of consciousness.
 
 ## Design fixed before evaluation
 
-The four starting frequencies are `2 * exp(-0.05*j)` Hz for `j = 0, 1, 2, 3`:
-2.0000, 1.9025, 1.8097, and 1.7214 Hz. Each grid contains exactly 11 nodes
-with frequencies `start * 1.618**k` for `k = 0,...,10`. These deterministic
-shifts check sensitivity to node placement; they do not compare frequency ratios.
+The starting-frequency interval runs from the original 2 Hz to `2/phi` Hz,
+where `phi = 1.618`. Divide that interval into four equal steps in Hz and use
+the original start plus the three interior points:
+
+```text
+start[j] = 2 - j * (2 - 2/phi) / 4,  j = 0, 1, 2, 3
+```
+
+This gives **2.0000, 1.8090, 1.6180, and 1.4271 Hz**, with the lower endpoint
+`2/phi = 1.2361 Hz` excluded. The starting frequencies are equally spaced in
+Hz; the nodes within each grid remain multiplicatively spaced by 1.618.
+Each grid contains exactly 11 nodes with frequencies `start * 1.618**k` for
+`k = 0,...,10`.
+
+This rule samples placements across one golden-spacing interval and has a
+clearer rationale than the previous small exponential shifts. We exclude the
+lower endpoint because a full one-node shift shares ten frequencies with the
+original grid, replacing only its highest frequency with a new lowest one.
+The original and three interior grids provide four distinct placements.
+Downward shifts retain all 11 nodes below the code's `Fs/4 = 250 Hz` limit.
+These deterministic shifts check sensitivity to node placement; they do not
+compare frequency ratios or constitute randomly sampled placements.
 The shifts also change the covered frequency range and extend below the paper's
 2 Hz lower bound. This limitation is intentional and must be reported.
 
@@ -26,7 +44,8 @@ Every grid has three conditions:
 The lowest four original frequencies are approximately 2, 3.2, 5.2, and 8.5 Hz;
 the highest four are 58.1, 93.9, 152.0, and 245.9 Hz. The task's modulation
 range is 10–50 Hz, so neither affected group coincides with that range in the
-original grid. After shifting, the lowest of the high group can enter the range.
+original grid. After shifting, the lowest of the high group can enter the range
+(approximately 46.97 Hz in the 1.6180 Hz grid and 41.43 Hz in the 1.4271 Hz grid).
 This task alignment is part of the interpretation, not a claim of matched
 low- and high-frequency information.
 
@@ -43,7 +62,12 @@ all configurations start with the same trainable parameter tensors and receive
 the same minibatch ordering. The buffers encoding frequency/damping differ.
 All configurations share the exact same training, validation, and test arrays.
 Frequency placement is a robustness check; the primary comparisons are paired
-accuracy changes from each grid's own baseline. This is not a 2×2 design.
+accuracy changes from each grid's own baseline. Compare these paired changes
+across grids to assess whether the damping effect depends on placement.
+Baseline-versus-baseline and the same damped condition across grids are also
+valid comparisons of placement sensitivity. Changing placement changes coverage
+and task alignment together, so it does not isolate their individual mechanisms.
+This is not a 2×2 design.
 
 ## Data and training
 

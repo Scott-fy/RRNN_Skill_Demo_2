@@ -47,12 +47,13 @@ def main():
     figs = folder / "figures"
     figs.mkdir(exist_ok=True)
     starts = c["starting_frequencies_hz"]
-    labels = [f"{s:.2f} Hz" for s in starts]
+    labels = [f"{s:.3f} Hz" for s in starts]
 
     # Method graphic, with no fitted outcomes: frequencies, envelope, task.
     fig, axes = plt.subplots(1, 3, figsize=(15.6, 5.4))
     fig.subplots_adjust(left=.06, right=.98, bottom=.24, top=.78, wspace=.35)
     fig.suptitle("Selective damping across four golden-ratio grids", fontsize=21, y=.96)
+    fig.text(.06, .86, "Four equally spaced starts in Hz between 2 and 2/φ; lower endpoint excluded. Golden spacing within each grid.", fontsize=12)
     ax = axes[0]
     m, n = c["affected_node_count"], c["node_count"]
     for i, start in enumerate(starts):
@@ -167,7 +168,7 @@ def main():
              "| Start (Hz) | Baseline accuracy | Low damping change | High damping change |", "|---|---|---|---|"]
     for g, start in enumerate(starts):
         baseline = np.mean([scores[g,s,"baseline"]*100 for s in seeds])
-        lines.append(f"| {start:.2f} | {baseline:.2f}% | {effects['low_damped'][g].mean():+.2f} pp | {effects['high_damped'][g].mean():+.2f} pp |")
+        lines.append(f"| {start:.3f} | {baseline:.2f}% | {effects['low_damped'][g].mean():+.2f} pp | {effects['high_damped'][g].mean():+.2f} pp |")
     lines += ["", "Changes are paired against baseline with the same grid and training seed.",
               "Individual fits are shown in the figure and recorded in runs.csv; averages alone can hide training variability."]
     (folder / "RESULTS.md").write_text("\n".join(lines)+"\n", encoding="utf-8")
